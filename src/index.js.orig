@@ -9,7 +9,11 @@ const _produce = async (deferredNode, fnPred) => {
 		await deferredNode.produce(async ({ path }) => {
 			if (fnPred && !await fnPred(path, null)) { return null }
 
+<<<<<<< HEAD
+			const stats = await Fs.promises.stat(path)
+=======
 			const stats = await Fs.promises.lstat(path)
+>>>>>>> d59c7d9 (save)
 			if (fnPred && !await fnPred(path, stats)) { return null }
 
 			if (!stats.isDirectory()) { return { path, stats, done: true } }
@@ -60,7 +64,11 @@ const _produce = async (deferredNode, fnPred) => {
 	return morePending
 }
 
+<<<<<<< HEAD
+const _traverse = async function * (deferredNode, includeDirs) {
+=======
 const _consume = async function * (deferredNode, includeDirs) {
+>>>>>>> d59c7d9 (save)
 	const node = await deferredNode.get()
 	if (!node) { return }
 
@@ -78,7 +86,11 @@ const _consume = async function * (deferredNode, includeDirs) {
 	for (;;) {
 		const childNode = await node.firstChild.get()
 		if (!childNode) { return }
+<<<<<<< HEAD
+		yield* _traverse(childNode.node, includeDirs)
+=======
 		yield* _consume(childNode.node, includeDirs)
+>>>>>>> d59c7d9 (save)
 		node.firstChild = childNode.next
 	}
 }
@@ -95,7 +107,10 @@ const recurse = async function * (path, options) {
 
 	let numIdleWorkers = concurrency
 	let error = null
+<<<<<<< HEAD
+=======
 	let exited = false
+>>>>>>> d59c7d9 (save)
 
 	const onDone = (result) => {
 		if (error) { return }
@@ -107,7 +122,10 @@ const recurse = async function * (path, options) {
 	const onError = (_error) => { error = _error }
 
 	const produce = () => {
+<<<<<<< HEAD
+=======
 		if (exited) { return }
+>>>>>>> d59c7d9 (save)
 		while (numIdleWorkers > 0) {
 			numIdleWorkers--
 			_produce(treeRoot, fnPred).then(onDone, onError)
@@ -115,6 +133,11 @@ const recurse = async function * (path, options) {
 	}
 	produce()
 
+<<<<<<< HEAD
+	for await (const value of _traverse(treeRoot, includeDirs)) {
+		if (error) { throw error }
+		yield value
+=======
 	try {
 		for await (const value of _consume(treeRoot, includeDirs)) {
 			if (error) { throw error }
@@ -123,6 +146,7 @@ const recurse = async function * (path, options) {
 	}
 	finally {
 		exited = true
+>>>>>>> d59c7d9 (save)
 	}
 }
 
