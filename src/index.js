@@ -60,7 +60,7 @@ const _produce = async (deferredNode, fnPred) => {
 	return morePending
 }
 
-const _traverse = async function * (deferredNode, includeDirs) {
+const _consume = async function * (deferredNode, includeDirs) {
 	const node = await deferredNode.get()
 	if (!node) { return }
 
@@ -78,7 +78,7 @@ const _traverse = async function * (deferredNode, includeDirs) {
 	for (;;) {
 		const childNode = await node.firstChild.get()
 		if (!childNode) { return }
-		yield* _traverse(childNode.node, includeDirs)
+		yield* _consume(childNode.node, includeDirs)
 		node.firstChild = childNode.next
 	}
 }
@@ -95,6 +95,7 @@ const recurse = async function * (path, options) {
 
 	let numIdleWorkers = concurrency
 	let error = null
+	let exited = false
 
 	const onDone = (result) => {
 		if (error) { return }
@@ -106,6 +107,7 @@ const recurse = async function * (path, options) {
 	const onError = (_error) => { error = _error }
 
 	const produce = () => {
+		if (exited) { return }
 		while (numIdleWorkers > 0) {
 			numIdleWorkers--
 			_produce(treeRoot, fnPred).then(onDone, onError)
@@ -113,9 +115,14 @@ const recurse = async function * (path, options) {
 	}
 	produce()
 
-	for await (const value of _traverse(treeRoot, includeDirs)) {
-		if (error) { throw error }
-		yield value
+	try {
+		for await (const value of _consume(treeRoot, includeDirs)) {
+			if (error) { throw error }
+			yield value
+		}
+	}
+	finally {
+		exited = true
 	}
 }
 

@@ -4,7 +4,7 @@
   "description": "recurse",
   "repository": {
     "type": "git",
-    "url": "git@github.com:kmamal/recurse.git"
+    "url": "git+ssh://git@github.com:kmamal/recurse.git"
   },
   "license": "MIT",
   "main": "./src/index.js",
