@@ -16,9 +16,9 @@
     "update-exports": "node ./scripts/update-exports.mjs"
   },
   "dependencies": {
-    "@kmamal/async": "^0.0.3"
+    "@kmamal/async": "^0.0.17"
   },
   "devDependencies": {
-    "@kmamal/testing": "^0.0.24"
+    "@kmamal/testing": "^0.0.33"
   }
 }
