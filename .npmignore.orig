@@ -1,8 +1,0 @@
-scripts
-**/*.test.js
-**/testing/
-**/_*
-<<<<<<< HEAD
-package.json~
-=======
->>>>>>> d59c7d9 (save)
